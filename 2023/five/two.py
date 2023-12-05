@@ -30,11 +30,12 @@ but how do we know when to stop matching the leftovers?
 79,93 -> 79,93 + (81,95) via 52,50,48
 
 146071405 TOO HIGH despite passing tests
+104070863 TOO HIGH despite passing tests
 '''
 
 #seeds: 79 14 55 13
 raw_input = '''
-seeds: 79 14
+seeds: 79 14 55 13
 
 seed-to-soil map:
 50 98 2
@@ -73,8 +74,8 @@ import os
 fname = 'input'
 if os.path.isfile('input2'):
   fname = 'input2'
-#with open(fname, 'r') as f:
-#    raw_input = f.read()
+with open(fname, 'r') as f:
+    raw_input = f.read()
 lines = raw_input.strip().split('\n')
 
 # dst1 is input. dst2 is output
@@ -90,11 +91,11 @@ lines = raw_input.strip().split('\n')
 # produces up to three ranges
 # mapped_range, pre_range, post-range
 def range_in_range(instart, inend, outdst, outsrc, outrange):
-  #print(f'({instart}, {inend}) in {outdst}, {outsrc}, {outrange}?')
+  print(f'({instart}, {inend}) in {outdst}, {outsrc}, {outrange}?')
   range_end = min(inend,outsrc+outrange)
   range_begin = max(instart,outsrc)
-  #print(f'range_begin {range_begin} instart {instart}')
-  #print(f'range_end {range_end} inend {inend}')
+  print(f'range_begin {range_begin} instart {instart}')
+  print(f'range_end {range_end} inend {inend}')
   if range_begin > range_end:
     return None, (instart, inend), None
   diff = outdst-outsrc
@@ -104,12 +105,14 @@ def range_in_range(instart, inend, outdst, outsrc, outrange):
   post_range = None
 
   if range_begin > instart:
-    pre_range = (instart, range_begin)
+    pre_range = (instart, range_begin-1)
   if range_end < inend:
-    post_range = (range_end, inend)
+    post_range = (range_end+1, inend)
   return result_range, pre_range, post_range
 
 #print(f'range test{range_in_range(79, 79+14, 52, 50, 48)}')
+#print(f'range test{range_in_range(74, 77, 45, 77, 23)}') # 77,77 matches then we carryover 74-76
+#quit()
 
 
 mappings = [[] for i in range(7)]
@@ -168,11 +171,12 @@ for seed_range in seed_ranges:
           if post_range:
             print(f'adding post_range {post_range}')
             ranges_this_level.add(post_range)
-          if current_range in ranges_this_level:
-            ranges_this_level.remove(current_range)
+          #if current_range in ranges_this_level:
+          #  ranges_this_level.remove(current_range)
           break
        # (79,98)->(81,100) with leftover (99,930). Get the 79,98 part out of this level.
        # We shouldn't carryover the leftover until we know it doesn't match with anything this level
+       #infinite loop. (74,77)->(45,45)+(74,77) ?? 
 
       if not matched_this_level:
         # carryover unmatched leftovers to next level
