@@ -56,6 +56,9 @@ with open(fname, 'r') as f:
     raw_input = f.read()
 lines = raw_input.strip().split('\n')
 
+import sys
+process_iter = int(sys.argv[1])
+
 mappings = [[] for i in range(7)]
 seed_sources = set()
 
@@ -64,8 +67,7 @@ for line in lines:
   line = line.strip()
   if len(seed_sources) == 0:
     tmp_seeds = [int(x) for x in line.split(':')[1].strip().split(' ')]
-    for i in range(0, len(tmp_seeds), 2):
-      seed_sources.add((tmp_seeds[i], tmp_seeds[i+1]))
+    seed_sources.add((tmp_seeds[process_iter*2], tmp_seeds[process_iter*2+1]))
       #for i in range(tmp_seeds[1]):
       #  seed_sources.add(tmp_seeds[0] + i)
     continue
@@ -93,8 +95,6 @@ end_vals = []
 min_val = float('inf')
 # iterate each seed through all seven mappings
 for idx,seed in enumerate(gen_next_seed_source()):
-  if (idx%1000000)==0:
-    print(f'iteration {idx}')
   current_val = seed
   for mapping_level in mappings:
     found_mapping = False
