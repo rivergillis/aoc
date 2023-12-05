@@ -29,6 +29,11 @@ but how do we know when to stop matching the leftovers?
 
 79,93 -> 79,93 + (81,95) via 52,50,48
 
+mapping tree should be
+  79,14 seed -> 81,95 soil -> 81,95 fert
+->81,95 water ->  
+
+
 146071405 TOO HIGH despite passing tests
 104070863 TOO HIGH despite passing tests
 '''
@@ -74,8 +79,8 @@ import os
 fname = 'input'
 if os.path.isfile('input2'):
   fname = 'input2'
-with open(fname, 'r') as f:
-    raw_input = f.read()
+#with open(fname, 'r') as f:
+#    raw_input = f.read()
 lines = raw_input.strip().split('\n')
 
 # dst1 is input. dst2 is output
@@ -91,11 +96,8 @@ lines = raw_input.strip().split('\n')
 # produces up to three ranges
 # mapped_range, pre_range, post-range
 def range_in_range(instart, inend, outdst, outsrc, outrange):
-  print(f'({instart}, {inend}) in {outdst}, {outsrc}, {outrange}?')
   range_end = min(inend,outsrc+outrange)
   range_begin = max(instart,outsrc)
-  print(f'range_begin {range_begin} instart {instart}')
-  print(f'range_end {range_end} inend {inend}')
   if range_begin > range_end:
     return None, (instart, inend), None
   diff = outdst-outsrc
