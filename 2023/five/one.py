@@ -57,13 +57,18 @@ with open(fname, 'r') as f:
 lines = raw_input.strip().split('\n')
 
 mappings = [[] for i in range(7)]
-seed_sources = []
+seed_sources = set()
 
 mapping_idx = -1
 for line in lines:
   line = line.strip()
   if len(seed_sources) == 0:
-    seed_sources = [int(x) for x in line.split(':')[1].strip().split(' ')]
+    tmp_seeds = [int(x) for x in line.split(':')[1].strip().split(' ')]
+    print(tmp_seeds)
+    for i in range(0, len(tmp_seeds), 2):
+      print(i)
+      for i in range(tmp_seeds[1]):
+        seed_sources.add(tmp_seeds[0] + i)
     continue
   # now find the mappings
   if len(line) == 0:
@@ -77,32 +82,31 @@ for line in lines:
   mappings[mapping_idx].append(mapping)
 
 assert(len(mappings) == 7)
+print(seed_sources)
 
-for mapping_level in mappings:
-  print(mapping_level)
+memo = [{} for i in range(7)] # maps in->out for each of the 7 levels
 
 end_vals = []
 # iterate each seed through all seven mappings
 for seed in seed_sources:
-  print(f'seed {seed}')
   current_val = seed
   for mapping_level in mappings:
     found_mapping = False
-    print(f'mapping {current_val} against mapping level {mapping_level}')
-    for mapping in mapping_level:
+    for mapping_level_idx,mapping in enumerate(mapping_level):
       if found_mapping:
         break
       # search through each pair to find if this seed fits in any range
       destination,source,range = mapping
       if current_val >= source and current_val <= source+range:
         diff=current_val-source
-        print(f'converting {current_val} to {destination+diff} via mapping {mapping}')
-        current_val=destination+diff
+        new_val = destination+diff
+        current_val=new_val
         found_mapping = True
+        memo[mapping_level_idx][current_val] = new_val
   end_vals.append(current_val)
       
   
 #print(seed_sources)
 #print(mappings)
-print(end_vals)
+#print(end_vals)
 print(min(end_vals))
